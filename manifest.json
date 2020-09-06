@@ -1,0 +1,30 @@
+{
+    "manifest_version": 2,
+    "name": "Albumkrtek",
+    "version": "1.0",
+    "description": "SFGame scrapbook helper",
+    "permissions": [
+        "webRequest",
+        "webRequestBlocking",
+        "tabs",
+        "<all_urls>"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.sfgame.cz/"
+            ],
+            "js": [
+                "pageload.js"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "background.js",
+            "playeritems.js",
+            "scrapbook.js"
+        ],
+        "persistent": true
+    }
+}
