@@ -28,7 +28,7 @@ function parseScrapbook(base64)
 
 function parseScrapbookItem(index)
 {
-    let imageName = null;
+    let imageName = null; 
 
     if (index >= 801 && index <= 905)
     {
