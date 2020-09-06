@@ -2,7 +2,7 @@ function parseScrapbook(base64)
 {
     let result = {};
 
-    base64 = base64.replace(/-/g, "/").replace(/_/g, "+");
+    base64 = base64.replace(/-/g, "+").replace(/_/g, "/");
     let bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0))
 
     let itemIndex = 1;
@@ -12,7 +12,7 @@ function parseScrapbook(base64)
 
         for (let j = 7; j >= 0; j--)
         {
-            const isOwned = (b >> j) & 1 == 1;
+            const isOwned = ((b >> j) & 1) == 1;
             const itemName = parseScrapbookItem(itemIndex);
             if (itemName)
             {
@@ -44,49 +44,42 @@ function parseScrapbookItem(index)
     }
     else if (index >= 1051 && index <= 1130)
     {
-
         let imagePath = "items\\09-rings\\";
         let arg = Method_3(80, index, 1130, 0, 9, CharacterClass.None);
         imageName = `${imagePath}${arg}`;
     }
     else if (index >= 1211 && index <= 1228)
     {
-
         let imagePath = "items\\09-rings\\epic\\";
         let arg = Method_5(18, index, 1228, 50, 67, 9, CharacterClass.None);
         imageName = `${imagePath}${arg}`;
     }
     else if (index >= 1251 && index <= 1287)
     {
-
         let imagePath = "items\\10-talismans\\";
         let arg = Method_4(37, index, 1287, 0, 10);
         imageName = `${imagePath}${arg}`;
     }
     else if (index >= 1325 && index <= 1342)
     {
-
         let imagePath = "items\\10-talismans\\";
         let arg = Method_5(18, index, 1342, 50, 50, 10, CharacterClass.None);
         imageName = `${imagePath}${arg}`;
     }
     else if (index >= 1365 && index <= 1514)
     {
-
         let imagePath = "items\\01-weapons\\warrior\\";
         let arg = Method_3(150, index, 1514, 0, 1, CharacterClass.Warrior);
         imageName = `${imagePath}${arg}`;
     }
     else if (index >= 1665 && index <= 1682)
     {
-
         let imagePath = "items\\01-weapons\\warrior\\epic\\";
         let arg = Method_5(14, index, 1678, 50, -1, 1, CharacterClass.Warrior);
         imageName = `${imagePath}${arg}`;
     }
     else if (index >= 1705 && index <= 1754)
     {
-
         let imagePath = "items\\02-shields\\warrior\\";
         let arg = Method_3(50, index, 1754, 0, 2, CharacterClass.Warrior);
         imageName = `${imagePath}${arg}`;
@@ -99,7 +92,6 @@ function parseScrapbookItem(index)
     }
     else if (index >= 1845 && index <= 1894)
     {
-
         let imagePath = "items\\03-armor\\warrior\\";
         let arg = Method_3(50, index, 1894, 0, 3, CharacterClass.Warrior);
         imageName = `${imagePath}${arg}`;
@@ -118,14 +110,12 @@ function parseScrapbookItem(index)
     }
     else if ((index >= 2085 && index <= 2093) || (index >= 2096 && index <= 2102))
     {
-
         let imagePath = "items\\04-shoes\\warrior\\";
         let arg = Method_5(18, index, 2102, 50, -1, 4, CharacterClass.Warrior);
         imageName = `${imagePath}${arg}`;
     }
     else if (index >= 2125 && index <= 2174)
     {
-
         let imagePath = "items\\05-gloves\\warrior\\";
         let arg = Method_3(50, index, 2174, 0, 5, CharacterClass.Warrior);
         imageName = `${imagePath}${arg}`;
