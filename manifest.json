@@ -12,7 +12,32 @@
     "content_scripts": [
         {
             "matches": [
-                "*://*.sfgame.cz/"
+                "*://*.sfgame.cz/",
+                "*://*.sfgame.net/",
+                "*://*.sfgame.de/",
+                "*://*.sfgame.pl/",
+                "*://*.sfgame.hu/",
+                "*://*.sfgame.ae/",
+                "*://*.sfgame.br/",
+                "*://*.sfgame.ca/",
+                "*://*.sfgame.cl/",
+                "*://*.sfgame.dk/",
+                "*://*.sfgame.es/",
+                "*://*.sfgame.fr/",
+                "*://*.sfgame.co.uk/",
+                "*://*.sfgame.gr/",
+                "*://*.sfgame.in/",
+                "*://*.sfgame.it/",
+                "*://*.sfgame.jp/",
+                "*://*.sfgame.mx/",
+                "*://*.sfgame.nl/",
+                "*://*.sfgame.pt/",
+                "*://*.sfgame.ro/",
+                "*://*.sfgame.ru/",
+                "*://*.sfgame.se/",
+                "*://*.sfgame.sk/",
+                "*://*.sfgame.tr/",
+                "*://*.sfgame.us/"
             ],
             "js": [
                 "pageload.js"
