@@ -7,17 +7,30 @@ function listener(details)
     let decoder = new TextDecoder("utf-8");
     let encoder = new TextEncoder();
 
+    let data = [];
+
     filter.ondata = event =>
     {
-        let str = decoder.decode(event.data, { stream: true });
-
-        onRequest(str, details.tabId);
-
-        filter.write(encoder.encode(str));
-        filter.disconnect();
+        data.push(event.data);
     };
 
-    return {}
+    filter.onstop = event => {
+        let str = "";
+        if (data.length == 1) {
+          str = decoder.decode(data[0]);
+        }
+        else {
+          for (let i = 0; i < data.length; i++) {
+            let stream = (i == data.length - 1) ? false : true;
+            str += decoder.decode(data[i], {stream});
+          }
+        }
+
+        filter.write(encoder.encode(str));
+        filter.close();
+        
+        onRequest(str, details.tabId);
+    };
 }
 
 browser.webRequest.onBeforeRequest.addListener(
