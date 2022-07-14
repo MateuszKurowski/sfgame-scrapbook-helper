@@ -33,6 +33,13 @@ function createPanel()
     nameview.textContent = "";
     nameview.style.fontSize = "15px";
     panel.appendChild(nameview);
+
+    let maxview = document.createElement("div");
+    maxview.id = "krtekmax";
+    maxview.style.color = "white";
+    maxview.textContent = "";
+    maxview.style.fontSize = "15px";
+    panel.appendChild(maxview);
 }
 
 createPanel();
@@ -47,6 +54,18 @@ function setPlayerName(name)
 {
     let nameview = document.getElementById("krteknametag");
     nameview.textContent = name;
+}
+
+function setMax(max)
+{
+    let maxview = document.getElementById("krtekmax");
+    maxview.textContent = `Max: ${max.playerRank} - ${max.playerName} ${max.count}`;
+}
+
+function resetMax()
+{
+    let maxview = document.getElementById("krtekmax");
+    maxview.textContent = '';
 }
 
 function interceptData() {
@@ -102,6 +121,7 @@ function scrapeData() {
 }
 
 let scrapbook = {};
+let maxUnowned = { count: -Infinity, playerName: null, playerRank: 0 };
 
 async function onRequest(text)
 {
@@ -125,6 +145,12 @@ async function onRequest(text)
 
         let playerName = nameMatch[0].replace("otherplayername.r:", "");
         setPlayerName(playerName);
+        if (maxUnowned.count < unownedCount) {
+            maxUnowned.count = unownedCount;
+            maxUnowned.playerName = playerName;
+            maxUnowned.playerRank = parseInt(lookatMatch[0].replace("otherplayer.playerlookat:", "").split('/')[6]);
+            setMax(maxUnowned);
+        }
     }
 
     let scrapbookRegex = /scrapbook.r:([^$]+)/g;
@@ -132,6 +158,14 @@ async function onRequest(text)
     if (scrapbookMatch && scrapbookMatch.length != 0)
     {
         scrapbook = parseScrapbook(scrapbookMatch[0].replace("scrapbook.r:", ""));
+    }
+
+    let combatRegex = /combatloglist.s/g;
+    let combatMatch = text.match(combatRegex);
+    if (combatMatch)
+    {
+        maxUnowned = { count: -Infinity, playerName: null, playerRank: 0 };
+        resetMax();
     }
 }
 
