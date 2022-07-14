@@ -2,6 +2,7 @@ function parseScrapbook(base64)
 {
     let result = {};
 
+    base64 = base64.split('&')[0];
     base64 = base64.replace(/-/g, "+").replace(/_/g, "/");
     let bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0))
 
