@@ -120,12 +120,10 @@ async function onRequest(text) {
   }
 }
 
-
 window.addEventListener('load', async function() {
 
   const { fetch: origFetch } = window
   window.fetch = async (...args) => {
-    console.log('fetch called with args:', args)
     const response = await origFetch(...args)
 
     const arrayBuffer = await response
@@ -133,8 +131,6 @@ window.addEventListener('load', async function() {
       .arrayBuffer()
 
     const decoded = new TextDecoder().decode(arrayBuffer)
-    console.log(arrayBuffer)
-    console.log(decoded)
 
     const dataDOMElement = document.createElement('div')
     dataDOMElement.id = '__interceptedData'
@@ -147,79 +143,6 @@ window.addEventListener('load', async function() {
   }
 
   requestIdleCallback(scrapeData)
-
-
-  // window.fetch = new Proxy(window.fetch, {
-  //   apply: async function(target, that, args) {
-  //
-  //
-  //     // args holds argument of fetch function
-  //     // Do whatever you want with fetch request
-  //     let temp = target.apply(that, args);
-  //
-  //     const url = args[0];
-  //     const options = args[1];
-  //
-  //     let resData = null;
-  //     await temp.then((res) => {
-  //
-  //       if (res.url.includes('req.php') && res.url.includes('sfgame') && res.status === 200) {
-  //
-  //         resData = res;
-  //
-  //         console.log(resData, options)
-  //
-  //
-  //       }
-  //
-  //     })
-  //
-  //
-  //     // temp.then((e) => {
-  //     //   // console.log(e, t)
-  //     //   // return this.onProgress(data)
-  //     //   return data
-  //     // })
-  //
-  //     // args.onProgress = args.onProgress.bind()then((one) => {
-  //     //   console.log(one)
-  //     //   return one;
-  //     // })
-  //
-  //     // temp.then(async (res) => {
-  //     //   // After completion of request
-  //     //   console.log('[SFBOT:] ', res)
-  //     //
-  //     //
-  //     //   if (res.url.includes('req.php') && res.url.includes('sfgame') && res.status === 200) {
-  //     //     let dataDOMElement = document.createElement('div')
-  //     //
-  //     //     const parsedBody = res.parsedBody
-  //     //
-  //     //     console.log(res.json())
-  //     //
-  //     //
-  //     //     let e = new TextDecoder
-  //     //
-  //     //     const decoded = await Promise.resolve(new TextDecoder().decode(res.parsedBody))
-  //     //
-  //     //     console.log('[SFBOT:] decoded', decoded)
-  //     //
-  //     //     dataDOMElement.id = '__interceptedData'
-  //     //     dataDOMElement.innerText = decoded
-  //     //     dataDOMElement.style.height = 0
-  //     //     dataDOMElement.style.overflow = 'hidden'
-  //     //     document.body.appendChild(dataDOMElement)
-  //     //
-  //     //     return decoded
-  //     //   }
-  //     //
-  //     // }
-  //
-  //     return temp
-  //   },
-  // });
-
 })
 
 
