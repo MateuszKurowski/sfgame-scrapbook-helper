@@ -110,9 +110,9 @@ function scrapeData() {
 }
 
 let scrapbook = {}
-let maxUnowned = { count: -Infinity, playerName: null, playerRank: 0 }
-let enemy = { count: -Infinity, playerName: null, playerLevel: 0 }
-let lastEnemy = { count: -Infinity, playerName: null, playerLevel: 0 }
+let maxUnowned = { count: -Infinity, playerName: null }
+let enemy = { count: -Infinity, playerName: null, playerLevel: 0, playerRank: 0 }
+let lastEnemy = { count: -Infinity, playerName: null, playerLevel: 0, playerRank: 0 }
 
 async function sendDataToServer() {
   try {
@@ -130,6 +130,7 @@ async function sendDataToServer() {
       name: enemy.playerName,
       itemCount: enemy.count,
       level: enemy.playerLevel,
+      rank: enemy.rank,
     }
 
     fetch('http://localhost:3000/add', {
@@ -170,6 +171,8 @@ async function onRequest(text) {
     }
 
     let items = parseLookat(lookatMatch[0].replace('otherplayer.playerlookat:', ''))
+    let rank = parseInt(lookatMatch[0].replace('otherplayer.playerlookat:', '').split('/')[6])
+    enemy.rank = rank
 
     let unownedCount = 0
     for (item of items) {

@@ -3,33 +3,38 @@ const app = express()
 const port = 3000
 const fs = require('fs')
 const csvParser = require('csv-parser')
-const { createObjectCsvWriter } = require('csv-writer')
+const createCsvStringifier = require('csv-writer').createObjectCsvStringifier
 
-const csvFilePath = 'items.csv'
+const csvFilePath = '../items.csv'
 
 if (!fs.existsSync(csvFilePath)) {
 	fs.writeFileSync(csvFilePath, '')
 }
 
-const csvWriter = createObjectCsvWriter({
+const csvStringifier = createCsvStringifier({
 	path: csvFilePath,
 	header: [
 		{ id: 'name', title: 'Nazwa Postaci' },
 		{ id: 'itemCount', title: 'Liczba Przedmiotów' },
 		{ id: 'level', title: 'Poziom Postaci' },
+		{ id: 'rank', title: 'Ranking' },
 	],
 })
 
 let itemsList = []
+let isDataLoaded = false
 
-fs.createReadStream(csvFilePath)
-	.pipe(csvParser())
-	.on('data', row => {
-		itemsList.push(row)
-	})
-	.on('end', () => {
-		console.log('Items loades from file:', itemsList)
-	})
+function loadDataFromCSV() {
+	fs.createReadStream(csvFilePath)
+		.pipe(csvParser())
+		.on('data', row => {
+			itemsList.push(row)
+		})
+		.on('end', () => {
+			console.log('Items loaded from file.')
+			isDataLoaded = true // Ustaw flagę na true po wczytaniu danych
+		})
+}
 
 app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*')
@@ -41,34 +46,49 @@ app.use((req, res, next) => {
 
 app.use(express.json())
 
-app.post('/add', (req, res) => {
-	const { name, itemCount, level } = req.body
+app.use((req, res, next) => {
+	if (!isDataLoaded) {
+		res.status(503).send('Server is not ready. Please wait.')
+	} else {
+		next()
+	}
+})
 
-	const existingIndex = itemsList.findIndex(item => item.name === name)
+app.post('/add', (req, res) => {
+	const { name, itemCount, level, rank } = req.body
+	const existingIndex = itemsList.findIndex(item => item['Nazwa Postaci'] == name)
+
 	if (existingIndex !== -1) {
+		itemsList[existingIndex].name = name
 		itemsList[existingIndex].itemCount = itemCount
 		itemsList[existingIndex].level = level
-		console.log('Player ', name, ' (', level, ') ', 'was modified. Item count: ', itemCount)
+		itemsList[existingIndex].rank = rank
+		console.log('Player ', name, ' (', level, ') ', 'was modified. Ranking:', rank, '. Item count: ', itemCount)
 	} else {
-		itemsList.push({ name, itemCount, level })
-		console.log('New player: ', name, ' (', level, ') ', '- ', itemCount)
+		itemsList.push({ name, itemCount, level, rank })
+		console.log('New player: ', name, ' (', level, '), Ranking: ', rank, ' - items count: ', itemCount)
 	}
 
-	csvWriter
-		.writeRecords(itemsList)
-		.then(() => {
-			res.send('Item added to file.')
-		})
-		.catch(error => {
+	console.log(csvStringifier.getHeaderString())
+	console.log(csvStringifier.stringifyRecords(itemsList))
+
+	const csvData = csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(itemsList)
+
+	fs.writeFile(csvFilePath, csvData, err => {
+		if (err) {
 			console.error('An error occurred while saving data:', error)
 			res.status(500).send('An error occurred while saving data.')
-		})
+		} else {
+			res.send('Item added to file.')
+		}
+	})
 })
 
 app.get('/list', (req, res) => {
 	res.json(itemsList)
 })
 
+loadDataFromCSV()
 app.listen(port, () => {
 	console.log(`Server works on http://localhost:${port}`)
 })
